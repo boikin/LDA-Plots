@@ -6,22 +6,35 @@
 \usage{
 perm_sample(values, N.p = 100)
 }
+\arguments{
+\item{values}{A matrix of group ID's and the first 2 lda projections of the data}
+
+\item{N.p}{The number of permutation sample means to be estimated}
+}
 \value{
 returns matrix of lda projected means dim n.b*number of groups by 3, columns group, LDA1, and LDA2
 }
 \description{
-discribtion
+Permutation resampling used for mean CI estimation
 }
 \examples{
 #example
 library(MASS)
+# simulated data set to give random groups
 q=100
 data <- as.data.frame(list(x1 = runif(q), x2 = rnorm(q), x3 = rlnorm(q), group = sample(c('s','d','w'),q,replace=TRUE)))
-lda <- lda(group ~., data = data) 
+
+# create lda projections, though not needed function will work with any bivariate data and corresponding grouping column
+lda <- lda(group ~., data = data)
+
+# format data, groups need to be numeric, can not be factors of characters
 V1<-as.numeric(as.factor(data$group))
 lda.vec<-as.data.frame(lda$scaling)
 lda.p <- predict(lda)
 v <- as.data.frame(cbind(V1, lda.p$x))
+str(v)
+
+# create permutation sample means
 b<-perm_sample(values = v)
 str(b)
 }

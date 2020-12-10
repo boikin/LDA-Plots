@@ -2,7 +2,7 @@
 % Please edit documentation in R/lda_gplot.R
 \name{lda_gplot}
 \alias{lda_gplot}
-\title{Function to make LDA plots wich confidence bounds}
+\title{Function to make LDA plots with confidence bounds}
 \usage{
 lda_gplot(
   lda,
@@ -25,25 +25,90 @@ lda_gplot(
   size = 0.1
 )
 }
+\arguments{
+\item{lda}{the output from lda() in the package MASS it is an lda class object.}
+
+\item{groups}{A vector of the original groups from the data used in lda(), the Y variable in the lda model.}
+
+\item{alpha}{Alpha value for CI's default in .05 for 95\% CI's}
+
+\item{N.boot}{The number of bootstrap sample means to be estimated.}
+
+\item{N.perm}{The number of permutation sample means to be estimated.}
+
+\item{fill}{TRUE/FALSE value if CI's plots should be filled/shaded in. Fill is not available for circles.}
+
+\item{means}{TRUE/FALSE value to indicate if group LDA means should be include.}
+
+\item{biplot}{TRUE/FALSE value to indicate if group LDA means should be include.}
+
+\item{normal.CI}{TRUE/FALSE value to indicate if group normal 95\% CI's for LDA projected data should be included.}
+
+\item{circles}{TRUE/FALSE value to indicate if asymptotic 95\% CI"s should be included for group LDA means.}
+
+\item{boot.CI}{TRUE/FALSE value to indicate if bootstrap estimated 95\% CI"s should be included for group LDA means.}
+
+\item{perm.CI}{TRUE/FALSE value to indicate if permutation estimated 95\% CI"s should be included for group LDA means.}
+
+\item{scale}{TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.}
+
+\item{groups.names}{user supplied name for groups variable, should be character string.}
+
+\item{labels}{user supplied group names vector of character strings with length same as nlevels(groups)}
+
+\item{x.axis}{user supplied x axis labels}
+
+\item{y.axis}{user supplied y axis labels}
+
+\item{size}{user supplied with of CI's}
+}
 \value{
-returns a ggolot2 object of the plot LDA projects with CI's
+returns a ggolot2 object of LDA projections, biplot, and various CI's
 }
 \description{
-discribtion
+lda_gplot()  creates a ggplot object of LDA projections, and the corresponding biplot and various CI's
 }
 \examples{
+# basic plot using Fisher's Iris data
 library(MASS)
-q=100
-data <- as.data.frame(list(x1 = runif(q), x2 = rnorm(q), x3 = rlnorm(q), group = sample(c('s','d','w'),q,replace=TRUE)))
-lda <- lda(group ~., data = data) 
-p<-lda_gplot(lda=lda, groups = data$group,perm.CI = TRUE,boot.CI=TRUE, circles = TRUE)
+iris.lda <- lda(Species ~., data = iris)
+p<-lda_gplot(lda=iris.lda, groups = iris$Species)
 p
+
+#resulting output can be modified using ggplot2
+# adding a title
+p + ggtitle("Fisher's Iris data")
+
 #no legend
 p + theme(legend.position='none')
-no legend title
+
+# no legend title
 p + theme(legend.title = element_blank()) +  scale_color_hue(labels = labels)
+
 # add a theme
 p+ theme_bw()
+
+
+# simulated data set to give random groups
+q=100
+data <- as.data.frame(list(x1 = runif(q), x2 = rnorm(q), x3 = rlnorm(q), group = sample(c('s','d','w','t'),q,replace=TRUE)))
+lda <- lda(group ~., data = data)
+
+# The function in anosim in the vegan package can be used to test multivariate differences in groups
+library(vegan)
+anosim(data[,-ncol(data)],data$group)
+
+# asymtopic CI's
+p <- lda_gplot(lda=lda, groups = data$group, normal.CI = FALSE, circles = TRUE, fill = FALSE)
+p + ggtitle("95\% asymtopic CI's")
+
+# bootstrap CI's
+p <- lda_gplot(lda=lda, groups = data$group, normal.CI = FALSE, boot.CI = TRUE, fill = FALSE)
+p + ggtitle("95\% bootstrap CI's")
+
+# permutation CI's
+p <- lda_gplot(lda=lda, groups = data$group, normal.CI = FALSE, perm.CI = TRUE, fill = FALSE)
+p + ggtitle("95\% permutation CI's")
 }
 \author{
 James Colee

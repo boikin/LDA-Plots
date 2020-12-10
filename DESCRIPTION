@@ -2,10 +2,10 @@ Package: LDAPlots
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "James",
-           family = "Colee",
+    person(given = "First",
+           family = "Last",
            role = c("aut", "cre"),
-           email = "colee@ufl.edu",
+           email = "first.last@example.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
@@ -19,12 +19,6 @@ Imports:
     ggforce,
     boot,
     reshape2,
-    stringr,
-    Rcpp,
+    stringr
+Suggests:
     MASS
-Suggests: 
-    knitr,
-    rmarkdown,
-VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp

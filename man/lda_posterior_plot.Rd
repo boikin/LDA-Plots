@@ -9,25 +9,43 @@ lda_posterior_plot(
   groups,
   scale = FALSE,
   groups.names = NULL,
+  title = NULL,
   labels = NULL,
   x.axis = NULL,
   y.axis = NULL
 )
 }
+\arguments{
+\item{lda}{the output from lda() in the package MASS it is an lda class object.}
+
+\item{groups}{A vector of the original groups from the data used in lda(), the Y variable in the lda model.}
+
+\item{scale}{TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.}
+
+\item{groups.names}{user supplied name for groups variable, should be character string.}
+
+\item{title}{user supplied text vector to change the title segment before group ID.}
+
+\item{labels}{user supplied group names vector of character strings with length same as nlevels(groups).}
+
+\item{x.axis}{user supplied x axis labels.}
+
+\item{y.axis}{user supplied y axis labels.}
+}
 \value{
-returns multiple plots of LDA posterior probabilities by groups
+returns a plots of LDA posterior probabilities for each group.
 }
 \description{
-discribtion
+lda_posterior_plot() creates a plot of the posterior probabilities of each predicted group membership based a lda model.
 }
 \examples{
-#posterior probability contour plot by goup
-#examples
+# posterior probablities plot using Fisher's Iris data
 library(MASS)
-q=100
-data <- as.data.frame(list(x1 = runif(q), x2 = rnorm(q), x3 = rlnorm(q), group = sample(c('s','d','w'),q,replace=TRUE)))
-lda <- lda(group ~., data = data) 
-lda_posterior_plot(lda=lda, groups = data$group, scale = TRUE)
+iris.lda <- lda(Species ~., data = iris)
+# three plots are produced for each species
+# white indicates higher posterior probabilities
+# black indicates lower posterior probabilities
+lda_posterior_plot(lda=iris.lda, groups = iris$Species)
 }
 \author{
 James Colee
