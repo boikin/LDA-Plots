@@ -71,6 +71,7 @@ lda_gplot()  creates a ggplot object of LDA projections, and the corresponding b
 \examples{
 # basic plot using Fisher's Iris data
 library(MASS)
+library(ggplot2)
 iris.lda <- lda(Species ~., data = iris)
 p<-lda_gplot(lda=iris.lda, groups = iris$Species)
 p

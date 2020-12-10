@@ -35,7 +35,7 @@ boot_sample <- function(values, N.b = 100) {
         colMeans(d[i, ])
     }
     for (i in 1:G) {
-        boot.s[N.b * (i - 1) + (1:N.b), 2:3] <- boot(values[values$V1 == i, 2:3], statfun, R = N.b)$t
+        boot.s[N.b * (i - 1) + (1:N.b), 2:3] <- boot::boot(values[values$V1 == i, 2:3], statfun, R = N.b)$t
         boot.s[N.b * (i - 1) + (1:N.b), 1] <- i
     }
     return(boot.s)

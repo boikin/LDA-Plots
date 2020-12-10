@@ -25,6 +25,7 @@
 ##' @examples
 ##' # basic plot using Fisher's Iris data
 ##' library(MASS)
+##' library(ggplot2)
 ##' iris.lda <- lda(Species ~., data = iris)
 ##' p<-lda_gplot(lda=iris.lda, groups = iris$Species)
 ##' p
@@ -98,48 +99,48 @@ lda_gplot <- function(lda, groups, alpha = 0.05, N.boot = 101, N.perm = 101, fil
 
 
     # base plot
-    p <- ggplot(lda.values) + geom_point(aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 1) + labs(color = groups.names, x = x.axis, y = y.axis) +
-        scale_color_hue(labels = labels)
+    p <- ggplot2::ggplot(lda.values) + ggplot2::geom_point(ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 1) + ggplot2::labs(color = groups.names, x = x.axis, y = y.axis) +
+      ggplot2::scale_color_hue(labels = labels)
 
     # add 95% ci for points
     if (normal.CI) {
-        p <- p + stat_ellipse(aes(x = LD1, y = LD2, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, size = size, show.legend = FALSE)
+        p <- p + ggplot2::stat_ellipse(ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, size = size, show.legend = FALSE)
         if (fill) {
-            p <- p + stat_ellipse(geom = "polygon", alpha = 0.25, aes(x = LD1, y = LD2, colour = as.factor(V1), fill = as.factor(V1)), type = "norm",
+            p <- p + ggplot2::stat_ellipse(geom = "polygon", alpha = 0.25, ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1), fill = as.factor(V1)), type = "norm",
                 linetype = 1, level = 1 - alpha, show.legend = FALSE)
         }
     }
 
     # add mean points
     if (means) {
-        p <- p + geom_point(data = mean, aes(x = LD1, y = LD2, colour = as.factor(V1)), shape = 3, size = 3, show.legend = FALSE)
+        p <- p + ggplot2::geom_point(data = mean, ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), shape = 3, size = 3, show.legend = FALSE)
     }
 
     # add circles
     if (circles) {
-        p <- p + geom_circle(aes(x0 = LD1, y0 = LD2, colour = as.factor(V1), r = sqrt(qchisq(1 - alpha/2, 2)/n)), data = mean, size = size, show.legend = FALSE)
+        p <- p + ggforce::geom_circle(ggplot2::aes(x0 = LD1, y0 = LD2, colour = as.factor(V1), r = sqrt(qchisq(1 - alpha/2, 2)/n)), data = mean, size = size, show.legend = FALSE)
     }
 
     # add biplot
     if (biplot) {
-        p <- p + geom_segment(data = lda.vec, aes(x = 0, y = 0, xend = LD1, yend = LD2), arrow = arrow(length = unit(1/2, "picas")), size = size) +
-            geom_text(data = lda.vec, aes(x = LD1, y = LD2, label = rownames(lda.vec)), hjust = 0, vjust = 0, size = 5)
+        p <- p + ggplot2::geom_segment(data = lda.vec, ggplot2::aes(x = 0, y = 0, xend = LD1, yend = LD2), arrow = ggplot2::arrow(length = ggplot2::unit(1/2, "picas")), size = size) +
+            ggplot2::geom_text(data = lda.vec, ggplot2::aes(x = LD1, y = LD2, label = rownames(lda.vec)), hjust = 0, vjust = 0, size = 5)
     }
     # boot strap CI
     if (boot.CI) {
         boot <- boot_sample(values = lda.values, N.boot)
-        p <- p + stat_ellipse(data = boot, aes(x = V2, y = V3, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
+        p <- p + ggplot2::stat_ellipse(data = boot, ggplot2::aes(x = V2, y = V3, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
         if (fill) {
-            p <- p + stat_ellipse(data = boot, geom = "polygon", alpha = 0.25, aes(x = V2, y = V3, colour = as.factor(V1), fill = as.factor(V1)),
+            p <- p + ggplot2::stat_ellipse(data = boot, geom = "polygon", alpha = 0.25, ggplot2::aes(x = V2, y = V3, colour = as.factor(V1), fill = as.factor(V1)),
                 type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
         }
     }
     # permutation CI
     if (perm.CI) {
         perm <- perm_sample(values = lda.values, N.perm)
-        p <- p + stat_ellipse(data = perm, aes(x = V2, y = V3, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
+        p <- p + ggplot2::stat_ellipse(data = perm, ggplot2::aes(x = V2, y = V3, colour = as.factor(V1)), type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
         if (fill) {
-            p <- p + stat_ellipse(data = perm, geom = "polygon", alpha = 0.25, aes(x = V2, y = V3, colour = as.factor(V1), fill = as.factor(V1)),
+            p <- p + ggplot2::stat_ellipse(data = perm, geom = "polygon", alpha = 0.25, ggplot2::aes(x = V2, y = V3, colour = as.factor(V1), fill = as.factor(V1)),
                 type = "norm", linetype = 1, level = 1 - alpha, show.legend = FALSE)
         }
     }

@@ -25,6 +25,7 @@ lda_posterior_plot <- function(lda, groups, scale = FALSE, groups.names = NULL,t
     requireNamespace("ggplot2")
     requireNamespace("reshape2")
     requireNamespace("stringr")
+    requireNamespace("boot")
     if (is.null(groups.names)) {
         groups.names <- c("groups")
     }
@@ -57,20 +58,21 @@ lda_posterior_plot <- function(lda, groups, scale = FALSE, groups.names = NULL,t
         xgrid <- seq(min(lda.post$LD1), max(lda.post$LD1), (max(lda.post$LD1) - min(lda.post$LD1))/50)
         ygrid <- seq(min(lda.post$LD2), max(lda.post$LD2), (max(lda.post$LD2) - min(lda.post$LD2))/50)
         grid <- expand.grid(LD1 = xgrid, LD2 = ygrid)
-        data.loess <- loess(logit((post + 0.001)/1.002) ~ LD1 * LD2 + LD1:LD1 + LD2:LD2, data = lda.post)
+        data.loess <- loess(boot::logit((post + 0.001)/1.002) ~ LD1 * LD2 + LD1:LD1 + LD2:LD2, data = lda.post)
         lda.3d <- predict(data.loess, newdata = grid)
-        lda.3d.melt <- melt(lda.3d, id.vars = c("LD1", "LD2"), measure.vars = "post")
-        lda.3d.melt$LD1 <- as.numeric(str_sub(lda.3d.melt$LD1, str_locate(lda.3d.melt$LD1, "=")[1, 1] + 1))
-        lda.3d.melt$LD2 <- as.numeric(str_sub(lda.3d.melt$LD2, str_locate(lda.3d.melt$LD2, "=")[1, 1] + 1))
+        lda.3d.melt <- reshape2::melt(lda.3d, id.vars = c("LD1", "LD2"), measure.vars = "post")
+        lda.3d.melt$LD1 <- as.numeric(stringr::str_sub(lda.3d.melt$LD1, stringr::str_locate(lda.3d.melt$LD1, "=")[1, 1] + 1))
+        lda.3d.melt$LD2 <- as.numeric(stringr::str_sub(lda.3d.melt$LD2, stringr::str_locate(lda.3d.melt$LD2, "=")[1, 1] + 1))
         names(lda.3d.melt) <- c("LD1", "LD2", "post")
-        lda.3d.melt$post <- inv.logit(lda.3d.melt$post)
+        lda.3d.melt$post <- boot::inv.logit(lda.3d.melt$post)
 
-        c <- ggplot(lda.3d.melt, aes(x = LD1, y = LD2, z = post)) +
-          stat_contour(geom = "polygon") + geom_tile(aes(fill = post)) +
-          scale_fill_gradient(low = "black", high = "white", name = "posterior") +
-          geom_point(data = lda.post, aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 2.5) +
-          labs(title = paste(title, lda$lev[i]), color = groups.names, x = x.axis, y = y.axis) +
-          scale_color_hue(labels = labels)
+        c <- ggplot2::ggplot(lda.3d.melt, ggplot2::aes(x = LD1, y = LD2, z = post)) +
+          ggplot2::stat_contour(geom = "polygon") +
+          ggplot2::geom_tile(ggplot2::aes(fill = post)) +
+          ggplot2::scale_fill_gradient(low = "black", high = "white", name = "posterior") +
+          ggplot2::geom_point(data = lda.post, ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 2.5) +
+          ggplot2::labs(title = paste(title, lda$lev[i]), color = groups.names, x = x.axis, y = y.axis) +
+          ggplot2::scale_color_hue(labels = labels)
 
         print(c)
     }
