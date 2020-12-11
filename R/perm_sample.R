@@ -7,7 +7,6 @@
 ##' @export
 ##'
 ##' @examples
-##' #example
 ##' library(MASS)
 ##' # simulated data set to give random groups
 ##' q=100

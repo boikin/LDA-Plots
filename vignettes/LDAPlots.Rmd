@@ -1,0 +1,130 @@
+---
+title: "LDAPlots"
+author: "James Colee"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LDAPlots}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+## Introduction
+
+The LDAPlots package was created to help with the interpretations of multivariate analysis resulting from the problem of having multiple response variables and a single categorical predictor variable.  Some of the common ways of analyzing these types of problems is either through multivariate analysis of variance (MANOVA), analysis of similarities (ANOSIM), or permutational multivariate analysis of variance (PERMANOVA).  The problem with all these methods is that there is not an easy way to visualize these results, when the categorical variable has more than three levels. Descriptions of these types of analysis and functions to perform them can be found in the package [vegan](https://cran.r-project.org/web/packages/vegan/vegan.pdf).
+
+```{r setup}
+library(LDAPlots)
+```
+
+## LDA Projection Plots
+
+To allow for better interpretation and visualization of these type of multivariate results, a linear discriminant analysis(LDA) can be performed.  LDA can project k-dimensional space into 2 dimensional space. The projected space can be plotted as an ordinary 2 dimensional plot. The function `lda_plot()` plots the resulting rotation of points along with the Normal 95% data ellipses.  The input is a lda class object resulting from `lda()` in the package MASS and a vector of the group ID's for each row of data in the original data set. It returns a gglot object which can be modified just as other ggplot objects can.  Examples of this are shown in the confidence intervals section. Along with the rotations the graphs can be modified to include group means, biplots, and three difference types of mean confidence intervals. 
+
+
+
+```{r fig.height = 5, fig.width = 6, fig.align = "center"}
+library(MASS)
+iris.lda <- lda(Species ~., data = iris)
+p<-lda_gplot(lda=iris.lda, groups = iris$Species)
+p
+```
+
+**Confidence Intervals**
+
+Three types of confidence bounds can be produced by `lda_gplot`: asymptotic, bootstrap, and permutation. In all three cases the rotations are assumed to be constant. This means that only the rotated data needs to be bootstrapped or permuted depending on the desired confidence interval. Logically keep the rotations constant makes sense, otherwise each new LDA rotation would be projected into different 2 dimensional space.  
+
+**Asymptotic Confidence Circles**
+
+The asymptotic confidence circles for the means can be added to the plot with `circles = TRUE` setting. The confidence circles have a radius of a square root of a chi square, with G degrees of freedom divided my the number of observations in each group.  
+
+$$
+asymptotic\,\,confidence\,\,circles\,\,radii = \sqrt\frac{\chi_{ G, 1-\alpha } }{n_{g}}
+$$
+
+
+```{r fig.height = 5, fig.width = 6, fig.align = "center"}
+library(ggplot2)
+p<-lda_gplot(lda=iris.lda, groups = iris$Species,
+             normal.CI = FALSE, circles = TRUE, biplot = FALSE)
+p + ggtitle("95% asymtopic CI's")
+```
+
+**Bootstrap Confidence Intervals**
+
+The bootstrap confidence intervals for the means can be added to the plot with `boot.CI = TRUE` setting. The bootstrap estimates are estimated via bootstrap resampling of the LDA rotations, then estimating the group means, and then estimating the normal confidence intervals based on simulated means. The bootstrap CI's are a non-parametric approximation of the individual group mean variability.
+
+```{r fig.height = 5, fig.width = 6, fig.align = "center"}
+p<-lda_gplot(lda=iris.lda, groups = iris$Species,
+             normal.CI = FALSE,boot.CI = TRUE, fill = FALSE, biplot = FALSE)
+p + ggtitle("95% bootstrap CI's")
+```
+
+**Permutation Confidence Intervals**
+
+The permutation confidence intervals for the means can be added to the plot with `circles = TRUE`. The permutation error estimates are estimated via permutation of group associations of the LDA rotations, then the errors are added back to the original means to give the permuted mean estimates, and then the the normal confidence intervals are estimated based on the permuted means. The permutation CI's are a non-parametric approximation of the pooled group mean variability.
+
+```{r fig.height = 5, fig.width = 6, fig.align = "center"}
+p<-lda_gplot(lda=iris.lda, groups = iris$Species,
+             normal.CI = FALSE,perm.CI = TRUE, fill = FALSE, biplot = FALSE)
+p + ggtitle("95% permutation CI's")
+```
+
+
+## Posterior Probability Plots
+
+A alternative way to visualize the rotations is to plot the posterior probabilities of group membership on the rotated axis. Posterior probabilities are the predicted probabilities of group membership based on a LDA model. The function `lda_posterior_plot()` plots the resulting rotation of points along with the posterior probabilities.  The input is a lda class object resulting from `lda()` in the package MASS and a vector of the group ID's for each row of data in the original data set. It returns a set of graphs one for each group ID.
+
+
+```{r fig.height = 5, fig.width = 6, fig.align = "center"}
+lda_posterior_plot(lda=iris.lda, groups = iris$Species)
+```
+
+## Other functions
+
+Two other functions are included in the package `boot_sample()` and `perm_sample()` both functions were designed originally as internal functions but were given user access.  They can be used to create bivariate bootstrap and permutation mean samples for data with group associations.
+
+Simulated data set with random group labels.
+
+```{r}
+q=100
+data <- as.data.frame(list(x1 = runif(q), x2 = rnorm(q), x3 = rlnorm(q), 
+                           group = sample(c('s','d','w'),q,replace=TRUE)))
+```
+
+Formatting of data with lda(), this step is not require if data is already bivariate.
+
+```{r}
+lda <- lda(group ~., data = data)
+# format data, groups need to be numeric, can not be factors of characters
+V1<-as.numeric(as.factor(data$group))
+lda.vec<-as.data.frame(lda$scaling)
+lda.p <- predict(lda)
+v <- as.data.frame(cbind(V1, lda.p$x))
+```
+
+Input data structure.
+
+```{r}
+str(v)
+```
+
+Create bootstrap sample means.
+
+```{r}
+b <- boot_sample(values = v)
+str(b)
+```
+
+
+Create permutation sample means.
+
+```{r}
+b <- boot_sample(values = v)
+str(b)
+```

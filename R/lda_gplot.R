@@ -38,7 +38,7 @@
 ##' p + theme(legend.position='none')
 ##'
 ##' # no legend title
-##' p + theme(legend.title = element_blank()) +  scale_color_hue(labels = labels)
+##' p + theme(legend.title = element_blank())
 ##'
 ##' # add a theme
 ##' p+ theme_bw()

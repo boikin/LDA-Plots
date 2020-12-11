@@ -1,15 +1,14 @@
 Package: LDAPlots
-Title: What the Package Does (One Line, Title Case)
+Title: LDA projection plots
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "James",
+           family = "Colee",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "colee@ufl.edu",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+Description: A Package for creating confidence intervals, biplots, and other useful plots of Linear Discrimate Analysis(LDA) results. Base on the output from lda() in the package MASS.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -21,4 +20,8 @@ Imports:
     reshape2,
     stringr
 Suggests:
-    MASS
+    MASS,
+    vegan,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

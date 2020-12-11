@@ -18,7 +18,6 @@ returns matrix of lda projected means dim n.b*number of groups by 3, columns gro
 Permutation resampling used for mean CI estimation
 }
 \examples{
-#example
 library(MASS)
 # simulated data set to give random groups
 q=100

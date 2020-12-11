@@ -15,11 +15,14 @@
 ##' @examples
 ##' # posterior probablities plot using Fisher's Iris data
 ##' library(MASS)
+##'
 ##' iris.lda <- lda(Species ~., data = iris)
+##'
 ##' # three plots are produced for each species
 ##' # white indicates higher posterior probabilities
 ##' # black indicates lower posterior probabilities
 ##' lda_posterior_plot(lda=iris.lda, groups = iris$Species)
+##'
 
 lda_posterior_plot <- function(lda, groups, scale = FALSE, groups.names = NULL,title=NULL, labels = NULL, x.axis = NULL, y.axis = NULL) {
     requireNamespace("ggplot2")
