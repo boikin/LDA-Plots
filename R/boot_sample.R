@@ -26,17 +26,27 @@
 ##' b <- boot_sample(values = v)
 ##' str(b)
 
-boot_sample <- function(values, N.b = 100) {
-    requireNamespace("boot")
-    G <- max(values$V1)
-    boot.s <- as.data.frame(array(NA, c(N.b * G, 3)))
-    statfun = function(d, i) {
-        colMeans(d[i, ])
+boot_sample <- function(values,N.b = 100)
+{
+  G <- max(values$V1)
+  boot.s <- as.data.frame(array(NA,c(N.b*G,3)))
+  boot2 <- function(x,n.bb)
+  {
+    p <- ncol(x)
+    n <- nrow(x)
+    b_sample <- matrix(NA, n.bb, p)
+    for (i in 1:n.bb) {
+      ind <- sample(1:n, replace=TRUE)
+      b_sample[i,]<-colMeans(x[ind,])
+
     }
-    for (i in 1:G) {
-        boot.s[N.b * (i - 1) + (1:N.b), 2:3] <- boot::boot(values[values$V1 == i, 2:3], statfun, R = N.b)$t
-        boot.s[N.b * (i - 1) + (1:N.b), 1] <- i
-    }
-    return(boot.s)
+    return(b_sample)
+  }
+  for(i in 1:G)
+  {
+    boot.s[N.b*(i-1)+(1:N.b),2:3] <- boot2(values[values$V1==i,2:3],N.b)
+    boot.s[N.b*(i-1)+(1:N.b),1] <- i
+  }
+  return(boot.s)
 }
 
