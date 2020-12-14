@@ -3,6 +3,7 @@
 ##' @param lda the output from lda() in the package MASS it is an lda class object.
 ##' @param groups A vector of the original groups from the data used in lda(), the Y variable in the lda model.
 ##' @param scale TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.
+##' @param points size parameter for the points, when points = -1, no points are visible.
 ##' @param groups.names user supplied name for groups variable, should be character string.
 ##' @param labels user supplied group names vector of character strings with length same as nlevels(groups).
 ##' @param title user supplied text vector to change the title segment before group ID.
@@ -24,7 +25,7 @@
 ##' lda_posterior_plot(lda=iris.lda, groups = iris$Species)
 ##'
 
-lda_posterior_plot <- function(lda, groups, scale = FALSE, groups.names = NULL,title=NULL, labels = NULL, x.axis = NULL, y.axis = NULL) {
+lda_posterior_plot <- function(lda, groups, scale = FALSE, points = 2.5, groups.names = NULL,title=NULL, labels = NULL, x.axis = NULL, y.axis = NULL) {
     requireNamespace("ggplot2")
     requireNamespace("reshape2")
     requireNamespace("stringr")
@@ -73,7 +74,7 @@ lda_posterior_plot <- function(lda, groups, scale = FALSE, groups.names = NULL,t
           ggplot2::stat_contour(geom = "polygon") +
           ggplot2::geom_tile(ggplot2::aes(fill = post)) +
           ggplot2::scale_fill_gradient(low = "black", high = "white", name = "posterior") +
-          ggplot2::geom_point(data = lda.post, ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 2.5) +
+          ggplot2::geom_point(data = lda.post, ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = points) +
           ggplot2::labs(title = paste(title, lda$lev[i]), color = groups.names, x = x.axis, y = y.axis) +
           ggplot2::scale_color_hue(labels = labels)
 

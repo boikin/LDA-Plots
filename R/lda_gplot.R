@@ -14,6 +14,7 @@
 ##' @param perm.CI TRUE/FALSE value to indicate if permutation estimated 95% CI"s should be included for group LDA means.
 ##' @param scale TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.
 ##' @param groups.names user supplied name for groups variable, should be character string.
+##' @param points size parameter for the points, when points = -1, no points are visible.
 ##' @param labels user supplied group names vector of character strings with length same as nlevels(groups)
 ##' @param x.axis user supplied x axis labels
 ##' @param y.axis user supplied y axis labels
@@ -68,7 +69,7 @@
 
 
 lda_gplot <- function(lda, groups, alpha = 0.05, N.boot = 101, N.perm = 101, fill = TRUE, means = TRUE, biplot = TRUE, normal.CI = TRUE, circles = FALSE,
-    boot.CI = FALSE, perm.CI = FALSE, scale = FALSE, groups.names = NULL, labels = NULL, x.axis = NULL, y.axis = NULL, size = 0.1) {
+    boot.CI = FALSE, perm.CI = FALSE, scale = FALSE, points = 1, groups.names = NULL, labels = NULL, x.axis = NULL, y.axis = NULL, size = 0.1) {
     requireNamespace("ggplot2")
     requireNamespace("ggforce")
     # check null
@@ -99,7 +100,7 @@ lda_gplot <- function(lda, groups, alpha = 0.05, N.boot = 101, N.perm = 101, fil
 
 
     # base plot
-    p <- ggplot2::ggplot(lda.values) + ggplot2::geom_point(ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = 1) + ggplot2::labs(color = groups.names, x = x.axis, y = y.axis) +
+    p <- ggplot2::ggplot(lda.values) + ggplot2::geom_point(ggplot2::aes(x = LD1, y = LD2, colour = as.factor(V1)), size = points) + ggplot2::labs(color = groups.names, x = x.axis, y = y.axis) +
       ggplot2::scale_color_hue(labels = labels)
 
     # add 95% ci for points

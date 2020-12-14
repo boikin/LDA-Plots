@@ -8,6 +8,7 @@ lda_posterior_plot(
   lda,
   groups,
   scale = FALSE,
+  points = 2.5,
   groups.names = NULL,
   title = NULL,
   labels = NULL,
@@ -21,6 +22,8 @@ lda_posterior_plot(
 \item{groups}{A vector of the original groups from the data used in lda(), the Y variable in the lda model.}
 
 \item{scale}{TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.}
+
+\item{points}{size parameter for the points, when points = -1, no points are visible.}
 
 \item{groups.names}{user supplied name for groups variable, should be character string.}
 

@@ -18,6 +18,7 @@ lda_gplot(
   boot.CI = FALSE,
   perm.CI = FALSE,
   scale = FALSE,
+  points = 1,
   groups.names = NULL,
   labels = NULL,
   x.axis = NULL,
@@ -51,6 +52,8 @@ lda_gplot(
 \item{perm.CI}{TRUE/FALSE value to indicate if permutation estimated 95\% CI"s should be included for group LDA means.}
 
 \item{scale}{TRUE/FALSE value to indicated if axis should be scaled to 0,1 before plotting.}
+
+\item{points}{size parameter for the points, when points = -1, no points are visible.}
 
 \item{groups.names}{user supplied name for groups variable, should be character string.}
 
